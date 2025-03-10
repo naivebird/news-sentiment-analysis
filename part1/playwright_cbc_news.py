@@ -1,13 +1,27 @@
+from playwright._impl._errors import TimeoutError
 from playwright.sync_api import sync_playwright
 
 URL = "https://www.cbc.ca/search?q=Vancouver&section=news&sortOrder=relevance&media=all"
 
 
-def scrape_cbc_news(count=100):
+def go_to_page(page, url, max_retries=5):
+    retry_count = 0
+    while True:
+        try:
+            page.goto(url, timeout=30000)
+            break
+        except TimeoutError:
+            retry_count += 1
+            if retry_count >= max_retries:
+                raise TimeoutError(f"Failed to load {url} after {max_retries} retries")
+            print(f"Retrying to load {url}... Attempt {retry_count}")
+
+
+def playwright_scrape_cbc_news(count=100):
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=False)
         page = browser.new_page()
-        page.goto(URL, timeout=60000)
+        go_to_page(page, URL)
         links = set()
         while True:
             page.evaluate("window.scrollTo(0, document.body.scrollHeight);")
@@ -25,24 +39,18 @@ def scrape_cbc_news(count=100):
             load_more_button.click()
 
         results = []
-        n = 0
         for link in links:
-            page.goto(link)
+            go_to_page(page, link)
             article = dict(
                 title=page.locator("h1.detailHeadline").inner_text(),
-                link=link,
-                date=page.locator("time").get_attribute("datetime"),
                 content=page.locator("div.story").inner_text(),
+                date=page.locator("time").get_attribute("datetime"),
+                url=link,
             )
             results.append(article)
-            n += 1
 
-            print(f"{n}. {article['title']}")
+            print(f"{len(results)}. {article['title']}")
 
         browser.close()
 
         return results
-
-
-if __name__ == "__main__":
-    news_results = scrape_cbc_news(count=10)
