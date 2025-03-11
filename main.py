@@ -5,6 +5,7 @@ import time
 from part1.playwright_cbc_news import playwright_scrape_cbc_news
 from part1.requests_cbc_news import requests_scrape_cbc_news
 from part2.transformers_cbc_news import transformers_get_sentiment_scores
+from part2.transformers_text_summary import transformers_summarize_text
 from part2.vader_sentiment_cbc_news import vader_get_sentiment_scores
 
 NEWS_PATH = "data/articles.json"
@@ -30,14 +31,17 @@ def benchmark_playwright_vs_requests(article_count):
         json.dump(results, file, indent=4)
 
 
-def save_sentiment_scores(vader_sentiment_scores, transformers_sentiment_scores):
+def save_sentiment_scores(article_summaries, vader_sentiment_scores, transformers_sentiment_scores):
     with open(SENTIMENT_SCORES_PATH, "w") as file:
-        writer = csv.writer(file)
-        writer.writerow(["title", "content", "date", "url", "vader sentiment score", "transformers sentiment score"])
+        writer = csv.writer(file, escapechar='\\')
+        writer.writerow(
+            ["title", "content", "date", "url", "summary", "vader sentiment score", "transformers sentiment score"]
+        )
         with open(NEWS_PATH, "r") as news_file:
             articles = json.load(news_file)
-            for article, vader_score, transformers_score in zip(
+            for article, summary, vader_score, transformers_score in zip(
                     articles,
+                    article_summaries,
                     vader_sentiment_scores,
                     transformers_sentiment_scores
             ):
@@ -46,6 +50,7 @@ def save_sentiment_scores(vader_sentiment_scores, transformers_sentiment_scores)
                      article["content"],
                      article["date"],
                      article["url"],
+                     summary["summary_text"],
                      vader_score,
                      transformers_score]
                 )
@@ -59,7 +64,10 @@ def benchmark_vader_vs_transformers():
     transformers_sentiment_scores = benchmark(func=transformers_get_sentiment_scores,
                                               input_path=NEWS_PATH)
 
-    save_sentiment_scores(vader_sentiment_scores, transformers_sentiment_scores)
+    article_summaries = benchmark(func=transformers_summarize_text,
+                                  input_path=NEWS_PATH)
+
+    save_sentiment_scores(article_summaries, vader_sentiment_scores, transformers_sentiment_scores)
 
 
 def part1():

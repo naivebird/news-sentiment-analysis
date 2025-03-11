@@ -28,13 +28,16 @@ def requests_scrape_cbc_news(query="Vancouver", count=10):
         "page": 1
     }
     results = []
+    scraped_urls = set()
     while len(results) < count:
         response = _make_request(URL, params=params).json()
         for item in response:
-            if item["category0"] == "news":
+            if item["category0"] == "news" and item["url"] not in scraped_urls:
                 article = get_article_content(url="https:" + item["url"])
                 results.append(article)
+                scraped_urls.add(item["url"])
                 print(f"{len(results)}. {article['title']}")
+        params["page"] += 1
     return results
 
 
