@@ -39,11 +39,11 @@ requests_scrape_cbc_news: 31.87 seconds
 ```
 ### Observations
 Playwright is significantly more resource-intensive than Requests as you have to download its browsers when setting it up and spin up a browser (in headful mode) when running it.
-Requests, on the other hand, is substantially faster, much more lightweight and resource efficient.
-But there's catch, Requests is only good for interacting with static web pages or APIs, and handling HTTP communications without the need for browser automation. 
+Requests, on the other hand, is substantially faster, much more lightweight, and resource efficient.
+But there's a catch, Requests is only good for interacting with static web pages or APIs, and handling HTTP communications without the need for browser automation. 
 Playwright shines when you have to interact with web pages (e.g., click buttons, fill forms) and scrape dynamic content rendered by JavaScript as you can't achieve this with Requests.
 To sum up, you should use Requests + BeautifulSoup when applicable to minimize the overhead and speed up your development unless a browser is required.
-For this assignment, because CBC has a public API for search articles and their article pages are static, 
+For this assignment, because CBC has a public API for searching articles and their article pages are static, 
 using Requests + BeautifulSoup is more than enough.
 
 ## Part 2
@@ -61,12 +61,13 @@ Benchmark results:
 ```
 vader_get_sentiment_scores: 1.02 seconds
 transformers_get_sentiment_scores: 29.16 seconds
+transformers_summarize_text: 783.12 seconds
 ```
 
 ### Observations
-VADER is a rule-based sentiment analysis tool that is specifically attuned to sentiments expressed in social media.
+VADER is a rule-based sentiment analysis tool specifically attuned to sentiments expressed in social media.
 It is fast and easy to use, but it has its limitations.
-It doesn't understand context, sarcasm, or irony, and it doesn't work well with long texts. 
+It doesn't understand context, sarcasm, or irony and doesn't work well with long texts. 
 It's good for short texts like tweets, but not for long articles. 
 Transformers, on the other hand, is a state-of-the-art NLP model that can be fine-tuned for sentiment analysis and text summarization.
 It is much more accurate and can understand context, sarcasm, and irony.
