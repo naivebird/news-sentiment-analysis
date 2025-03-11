@@ -1,7 +1,7 @@
 ## Overview
 
 This repository consists of a `main.py` file and 3 sub-directories `part1`, `part2`, which contain the code for the corresponding parts in the assignment and `data` directory where input and output files are saved.
-You can run the `main.py` which calls `part1` and `part2` functions sequentially and generates the final output file in: `data/sentiment_scores.csv`
+You can run the `main.py` which calls `part1` and `part2` functions sequentially and generates the final output file in: `data/sentiment_scores.csv`. The result file is already generated for you to view, you don't necessarily run the project to get the output file.
 ## Install required packages
 Navigate to the project directory:
 ```bash
