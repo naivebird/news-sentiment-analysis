@@ -10,7 +10,7 @@ cd news-sentiment-analysis
 Setup your virtual environment
 ```bash
 python -m venv env
-cd env/Scripts && activate && cd ../../
+env\Scripts\activate
 ```
 Install poetry
 ```bash
